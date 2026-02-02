@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Will You Be My Valentine?</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 420px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    h1 {
+      color: #064273;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #064273;
+      margin-bottom: 2rem;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+    #yes {
+      background: #ff4d6d;
+      color: white;
+    }
+
+    #no {
+      background: #ddd;
+      color: #333;
+      position: relative;
+    }
+
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 24px;
+      animation: fall 5s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-10%); opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0; }
+    }
+
+    #letter {
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      color: #064273;
+      font-size: 1rem;
+      min-height: 150px;
+      margin-top: 1rem;
+    }
+
+    .cute-img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 15px;
+      margin-top: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .cute-img.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<!-- FIRST CARD -->
+<div class="card" id="card">
+  <h1>Will You Be My Valentine? 💖</h1>
+  <p>Even though we're miles apart, my heart is always with you.</p>
+
+  <div class="buttons">
+    <button id="yes">Yes 💘</button>
+    <button id="no">No 🙈</button>
+  </div>
+</div>
+
+<!-- SURPRISE CARD -->
+<div class="card" id="surprise" style="display:none;">
+  <h1>You said YES!!! 💞</h1>
+
+  <div id="letter"></div>
+
+  <img
+    src="https://i.pinimg.com/736x/d6/ef/95/d6ef952cf017b2016e070e0031120b56.jpg"
+    alt="romantic couple"
+    class="cute-img"
+  >
+
+  <!-- LOCAL MUSIC -->
+  <audio id="musicPlayer" loop>
+    <source src="music.mp3" type="audio/mpeg">
+    Your browser does not support audio.
+  </audio>
+</div>
+
+<script>
+  const noBtn = document.getElementById('no');
+  const yesBtn = document.getElementById('yes');
+  const heartsContainer = document.getElementById('hearts');
+  const music = document.getElementById('musicPlayer');
+
+  const noTexts = [
+    "No 🙈",
+    "Are you sure? 😳",
+    "Think again 😏",
+    "Don’t break my heart 💔",
+    "Okay okay… YES? 🥺"
+  ];
+  let noIndex = 0;
+
+  noBtn.addEventListener('mouseover', () => {
+    const x = Math.random() * 200 - 100;
+    const y = Math.random() * 200 - 100;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+    noIndex = (noIndex + 1) % noTexts.length;
+    noBtn.textContent = noTexts[noIndex];
+  });
+
+  function createHearts(count) {
+    for (let i = 0; i < count; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = 3 + Math.random() * 3 + 's';
+      heartsContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }
+  }
+
+  yesBtn.addEventListener('click', () => {
+    document.getElementById('card').style.display = 'none';
+    document.getElementById('surprise').style.display = 'block';
+
+    createHearts(50);
+
+    // PLAY MUSIC (user interaction = allowed)
+    music.play();
+
+    const letterText = `My Dearest Love,
+
+Every day without you feels incomplete,
+But knowing we share this love keeps me strong.
+You make my heart smile across every mile,
+And I can’t wait for the next moment we’re together.
+
+Thank you for being my Valentine,
+my heart, my everything.
+
+❤️ Forever Yours ❤️`;
+
+    const letter = document.getElementById('letter');
+    let i = 0;
+
+    function typeLetter() {
+      if (i < letterText.length) {
+        letter.textContent += letterText.charAt(i);
+        i++;
+        setTimeout(typeLetter, 60);
+      } else {
+        document.querySelector('.cute-img').classList.add('show');
+      }
+    }
+
+    typeLetter();
+  });
+
+  setInterval(() => createHearts(1), 400);
+</script>
+
+</body>
+</html>
